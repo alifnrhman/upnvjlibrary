@@ -6,6 +6,9 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Bounce } from "react-toastify";
 
 const EditBuku = ({ show, handleClose, currentIdBuku, fetchData }) => {
    const [formData, setFormData] = useState({
@@ -16,7 +19,7 @@ const EditBuku = ({ show, handleClose, currentIdBuku, fetchData }) => {
       penulis: "",
       penerbit: "",
       kategori: "",
-      stok_buku: "",
+      stok: "",
    });
 
    const handleChange = (e) => {
@@ -36,8 +39,12 @@ const EditBuku = ({ show, handleClose, currentIdBuku, fetchData }) => {
             handleClose();
             fetchData();
             console.log(res);
+            notify(toast.success("Perubahan berhasil disimpan!"));
          })
-         .catch((err) => console.log(err));
+         .catch((err) => {
+            console.log(err);
+            notify(toast.error("Terjadi kesalahan!"));
+         });
    };
 
    useEffect(() => {
@@ -54,93 +61,124 @@ const EditBuku = ({ show, handleClose, currentIdBuku, fetchData }) => {
                   penulis: res.data[0]?.penulis || "",
                   penerbit: res.data[0]?.penerbit || "",
                   kategori: res.data[0]?.kategori || "",
-                  stok_buku: res.data[0]?.stok_buku || "",
+                  stok: res.data[0]?.stok || "",
                });
             })
-            .catch((err) => console.error("Fetch error: ", err));
+            .catch((err) => {
+               console.log(err);
+               notify(toast.error("Terjadi kesalahan saat fetching data buku!"));
+            });
       }
    }, [currentIdBuku]);
 
+   const notify = () => {
+      toast.success({
+         position: "top-center",
+         autoClose: 5000,
+         hideProgressBar: false,
+         closeOnClick: false,
+         pauseOnHover: false,
+         draggable: false,
+         progress: undefined,
+         theme: "light",
+         transition: Bounce,
+      });
+
+      toast.error({
+         position: "top-center",
+         autoClose: 5000,
+         hideProgressBar: false,
+         closeOnClick: true,
+         pauseOnHover: false,
+         draggable: false,
+         progress: undefined,
+         theme: "light",
+         transition: Bounce,
+      });
+   };
+
    return (
-      <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} centered className="modal-lg">
-         <Modal.Header>
-            <Modal.Title className="mx-3">Edit Buku</Modal.Title>
-         </Modal.Header>
-         <Modal.Body>
-            <Form className="m-3" onSubmit={handleSubmit}>
-               <Row>
-                  <Col sm={2}>
-                     <Form.Group as={Col} className="mb-3">
-                        <FloatingLabel label="ID Buku">
-                           <Form.Control type="text" name="id_buku" value={formData.id_buku} placeholder="ID Buku" onChange={handleChange} autoFocus required />
-                        </FloatingLabel>
-                     </Form.Group>
-                  </Col>
-                  <Col>
-                     <Form.Group as={Col} className="mb-3" controlId="nama_buku">
-                        <FloatingLabel label="Nama Buku">
-                           <Form.Control type="text" name="nama_buku" value={formData.nama_buku} placeholder="Nama Buku" onChange={handleChange} required />
-                        </FloatingLabel>
-                     </Form.Group>
-                  </Col>
-               </Row>
-               <Row>
-                  <Col sm={7}>
-                     <Form.Group as={Col} className="mb-3" controlId="isbn">
-                        <FloatingLabel label="ISBN">
-                           <Form.Control type="text" name="isbn" value={formData.isbn} placeholder="ISBN" onChange={handleChange} required />
-                        </FloatingLabel>
-                     </Form.Group>
-                  </Col>
-                  <Col>
-                     <Form.Group as={Col} className="mb-3" controlId="tahun_terbit">
-                        <FloatingLabel label="Tahun Terbit">
-                           <Form.Control type="text" name="tahun_terbit" value={formData.tahun_terbit} placeholder="Tahun Terbit" onChange={handleChange} required />
-                        </FloatingLabel>
-                     </Form.Group>
-                  </Col>
-               </Row>
-               <Row>
-                  <Col>
-                     <Form.Group as={Col} className="mb-3" controlId="penulis">
-                        <FloatingLabel label="Penulis">
-                           <Form.Control type="text" name="penulis" value={formData.penulis} placeholder="Penulis" onChange={handleChange} required />
-                        </FloatingLabel>
-                     </Form.Group>
-                  </Col>
-                  <Col>
-                     <Form.Group as={Col} className="mb-3" controlId="penerbit">
-                        <FloatingLabel label="Penerbit">
-                           <Form.Control type="text" name="penerbit" value={formData.penerbit} placeholder="Penerbit" onChange={handleChange} required />
-                        </FloatingLabel>
-                     </Form.Group>
-                  </Col>
-               </Row>
-               <Row>
-                  <Col>
-                     <Form.Group as={Col} className="mb-3" controlId="kategori">
-                        <FloatingLabel label="Kategori">
-                           <Form.Control type="text" name="kategori" value={formData.kategori} placeholder="Kategori" onChange={handleChange} required />
-                        </FloatingLabel>
-                     </Form.Group>
-                  </Col>
-                  <Col sm={2}>
-                     <Form.Group as={Col} className="mb-3" controlId="stok">
-                        <FloatingLabel label="Stok">
-                           <Form.Control type="text" name="stok_buku" value={formData.stok_buku} placeholder="Stok" onChange={handleChange} required />
-                        </FloatingLabel>
-                     </Form.Group>
-                  </Col>
-               </Row>
-               <Modal.Footer className="px-0 pb-0 pt-4 mt-2">
-                  <Button variant="outline-danger" type="button" className="m-0 me-2" onClick={handleClose}>
-                     Cancel
-                  </Button>
-                  <Button as="input" type="submit" value="Simpan" variant="primary" className="m-0" />
-               </Modal.Footer>
-            </Form>
-         </Modal.Body>
-      </Modal>
+      <>
+         <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} centered className="modal-lg">
+            <Modal.Header>
+               <Modal.Title className="mx-3">Edit Buku</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+               <Form className="m-3" onSubmit={handleSubmit}>
+                  <Row>
+                     <Col sm={2}>
+                        <Form.Group as={Col} className="mb-3">
+                           <FloatingLabel label="ID Buku">
+                              <Form.Control type="text" name="id_buku" value={formData.id_buku} placeholder="ID Buku" onChange={handleChange} autoFocus required />
+                           </FloatingLabel>
+                        </Form.Group>
+                     </Col>
+                     <Col>
+                        <Form.Group as={Col} className="mb-3" controlId="nama_buku">
+                           <FloatingLabel label="Nama Buku">
+                              <Form.Control type="text" name="nama_buku" value={formData.nama_buku} placeholder="Nama Buku" onChange={handleChange} required />
+                           </FloatingLabel>
+                        </Form.Group>
+                     </Col>
+                  </Row>
+                  <Row>
+                     <Col sm={7}>
+                        <Form.Group as={Col} className="mb-3" controlId="isbn">
+                           <FloatingLabel label="ISBN">
+                              <Form.Control type="text" name="isbn" value={formData.isbn} placeholder="ISBN" onChange={handleChange} required />
+                           </FloatingLabel>
+                        </Form.Group>
+                     </Col>
+                     <Col>
+                        <Form.Group as={Col} className="mb-3" controlId="tahun_terbit">
+                           <FloatingLabel label="Tahun Terbit">
+                              <Form.Control type="text" name="tahun_terbit" value={formData.tahun_terbit} placeholder="Tahun Terbit" onChange={handleChange} required />
+                           </FloatingLabel>
+                        </Form.Group>
+                     </Col>
+                  </Row>
+                  <Row>
+                     <Col>
+                        <Form.Group as={Col} className="mb-3" controlId="penulis">
+                           <FloatingLabel label="Penulis">
+                              <Form.Control type="text" name="penulis" value={formData.penulis} placeholder="Penulis" onChange={handleChange} required />
+                           </FloatingLabel>
+                        </Form.Group>
+                     </Col>
+                     <Col>
+                        <Form.Group as={Col} className="mb-3" controlId="penerbit">
+                           <FloatingLabel label="Penerbit">
+                              <Form.Control type="text" name="penerbit" value={formData.penerbit} placeholder="Penerbit" onChange={handleChange} required />
+                           </FloatingLabel>
+                        </Form.Group>
+                     </Col>
+                  </Row>
+                  <Row>
+                     <Col>
+                        <Form.Group as={Col} className="mb-3" controlId="kategori">
+                           <FloatingLabel label="Kategori">
+                              <Form.Control type="text" name="kategori" value={formData.kategori} placeholder="Kategori" onChange={handleChange} required />
+                           </FloatingLabel>
+                        </Form.Group>
+                     </Col>
+                     <Col sm={2}>
+                        <Form.Group as={Col} className="mb-3" controlId="stok">
+                           <FloatingLabel label="Stok">
+                              <Form.Control type="text" name="stok" value={formData.stok} placeholder="Stok" onChange={handleChange} required />
+                           </FloatingLabel>
+                        </Form.Group>
+                     </Col>
+                  </Row>
+                  <Modal.Footer className="px-0 pb-0 pt-4 mt-2">
+                     <Button variant="outline-danger" type="button" className="m-0 me-2" onClick={handleClose}>
+                        Cancel
+                     </Button>
+                     <Button as="input" type="submit" value="Simpan" variant="primary" className="m-0" />
+                  </Modal.Footer>
+               </Form>
+            </Modal.Body>
+         </Modal>
+      </>
    );
 };
 

@@ -6,6 +6,9 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import axios from "axios";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Bounce } from "react-toastify";
 
 const TambahBuku = ({ fetchData }) => {
    const [show, setShow] = useState(false);
@@ -27,7 +30,7 @@ const TambahBuku = ({ fetchData }) => {
       penulis: "",
       penerbit: "",
       kategori: "",
-      stok_buku: "",
+      stok: "",
    });
 
    function handleSubmit(e) {
@@ -39,9 +42,39 @@ const TambahBuku = ({ fetchData }) => {
             handleClose();
             fetchData();
             console.log(res);
+            notify(toast.success("Buku berhasil ditambahkan!"));
          })
-         .catch((err) => console.log(err));
+         .catch((err) => {
+            console.log(err);
+            notify(toast.error("Terjadi kesalahan!"));
+         });
    }
+
+   const notify = () => {
+      toast.success({
+         position: "top-center",
+         autoClose: 5000,
+         hideProgressBar: false,
+         closeOnClick: false,
+         pauseOnHover: false,
+         draggable: false,
+         progress: undefined,
+         theme: "light",
+         transition: Bounce,
+      });
+
+      toast.error({
+         position: "top-center",
+         autoClose: 5000,
+         hideProgressBar: false,
+         closeOnClick: true,
+         pauseOnHover: false,
+         draggable: false,
+         progress: undefined,
+         theme: "light",
+         transition: Bounce,
+      });
+   };
 
    return (
       <>
@@ -116,7 +149,7 @@ const TambahBuku = ({ fetchData }) => {
                      <Col sm={2}>
                         <Form.Group as={Col} className="mb-3" controlId="stok">
                            <FloatingLabel label="Stok">
-                              <Form.Control type="text" name="stok_buku" value={formData.stok_buku} placeholder="Stok" onChange={handleChange} required />
+                              <Form.Control type="text" name="stok" value={formData.stok} placeholder="Stok" onChange={handleChange} required />
                            </FloatingLabel>
                         </Form.Group>
                      </Col>

@@ -3,10 +3,10 @@ import NavigationBar from "../components/NavigationBar";
 
 const DaftarPeminjamanPage = () => {
    return (
-      <>
+      <div>
          <NavigationBar />
          <DaftarPeminjamanBuku />
-      </>
+      </div>
    );
 };
 
