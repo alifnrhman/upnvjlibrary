@@ -46,7 +46,6 @@ const HomeStats = () => {
             console.error("Fetch error: ", err);
             notify(toast.error("Terjadi kesalahan saat fetching data!"));
          });
-      console.log(data);
    };
 
    useEffect(() => {
@@ -74,7 +73,7 @@ const HomeStats = () => {
                {data.map((d, index) => (
                   <Fragment key={index}>
                      <div className="col">
-                        <div className="p-2">
+                        <div className="p-2 border-end">
                            <div className="row card-body d-flex flex-column align-items-center">
                               <div className="mb-3">
                                  <img className="float-right" src="/src/assets/Bukuu.png" alt="sans" style={{ width: "64px" }} />
@@ -87,7 +86,7 @@ const HomeStats = () => {
                         </div>
                      </div>
                      <div className="col">
-                        <div className="p-2">
+                        <div className="p-2 border-end">
                            <div className="row card-body d-flex flex-column align-items-center">
                               <div className="mb-3">
                                  <img className="float-right" src="/src/assets/BukuSedangPinjam.png" alt="sans" style={{ width: "64px" }} />
@@ -100,7 +99,7 @@ const HomeStats = () => {
                         </div>
                      </div>
                      <div className="col">
-                        <div className="p-2">
+                        <div className="p-2 border-end">
                            <div className="row card-body d-flex flex-column align-items-center">
                               <div className="mb-3">
                                  <img src="/src/assets/BukuSelesaiPinjam.png" alt="sans" style={{ width: "64px" }} />

@@ -444,7 +444,7 @@ const Stats = () => {
             <div className="col-4">
                <div className="card p-1">
                   <div className="card-body">
-                     <h5 className="card-title mx-2 text-center">Mahasiswa of the month</h5>
+                     <h5 className="card-title mx-2 text-center">Mahasiswa of the Month</h5>
                      <hr />
                      <div className="row">
                         <div className="col">

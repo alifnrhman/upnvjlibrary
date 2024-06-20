@@ -9,117 +9,107 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// app.post("/add_user", (req, res) => {
-//    const sql = `INSERT INTO users (username, password) VALUES (?, ?)`;
-//    const values = [req.body.username, req.body.password];
-//    db.query(sql, values, (err, result) => {
-//       if (err) console.log(err);
-//       return res.json({ success: "User added successfully" });
-//    });
-// });
-
+// BUKU
+// Tambah buku
 app.post("/tambahbuku", (req, res) => {
    const sql = `INSERT INTO buku (id_buku, nama_buku, isbn, penulis, penerbit, tahun_terbit, kategori, stok) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
    const values = [req.body.id_buku, req.body.nama_buku, req.body.isbn, req.body.penulis, req.body.penerbit, req.body.tahun_terbit, req.body.kategori, req.body.stok];
    db.query(sql, values, (err, result) => {
-      if (err) console.log(err);
-      return res.json({ success: "Book added successfully" });
-   });
-});
-
-app.get("/buku", (req, res) => {
-   const sql = `SELECT * FROM buku`;
-   db.query(sql, (err, data) => {
-      if (err) throw err;
-      return res.json(data);
-   });
-});
-
-// delete book
-app.delete("/buku/delete/:id_buku", (req, res) => {
-   const sql = `DELETE FROM buku WHERE id_buku = ?`;
-   db.query(sql, req.params.id_buku, (err, result) => {
       if (err) {
-         console.log(err);
+         res.status(500).send("Error inserting into buku");
       } else {
-         return res.json({ success: "Book deleted successfully" });
+         return res.json({ success: "Buku berhasil ditambahkan" });
       }
    });
 });
 
-// Add mahasiswa
+// Tampilkan buku
+app.get("/buku", (req, res) => {
+   const sql = `SELECT * FROM buku`;
+   db.query(sql, (err, data) => {
+      if (err) {
+         res.status(500).send("Error fetching buku details");
+      } else {
+         return res.json(data);
+      }
+   });
+});
+
+// Tampilkan buku by id
+app.get("/buku/getrecord/:id_buku", (req, res) => {
+   const sql = `SELECT * FROM buku WHERE id_buku = ?`;
+   db.query(sql, req.params.id_buku, (err, result) => {
+      if (err) {
+         res.status(500).send("Error fetching buku details by id");
+      } else {
+         return res.json(result);
+      }
+   });
+});
+
+// Hapus buku
+app.delete("/buku/delete/:id_buku", (req, res) => {
+   const sql = `DELETE FROM buku WHERE id_buku = ?`;
+   db.query(sql, req.params.id_buku, (err, result) => {
+      if (err) {
+         res.status(500).send("Error deleting buku");
+      } else {
+         return res.json({ success: "Buku berhasil dihapus" });
+      }
+   });
+});
+
+// Update buku
+app.put("/buku/update/:id_buku", (req, res) => {
+   const sql = `UPDATE buku SET id_buku = ?, nama_buku = ?, isbn = ?, penulis = ?, penerbit = ?, tahun_terbit = ?, kategori = ?, stok = ? WHERE id_buku = ?`;
+   const values = [req.body.id_buku, req.body.nama_buku, req.body.isbn, req.body.penulis, req.body.penerbit, req.body.tahun_terbit, req.body.kategori, req.body.stok, req.params.id_buku];
+   db.query(sql, values, (err, result) => {
+      if (err) throw err;
+      res.send(result);
+   });
+});
+
+// MAHASISWA
+// Tambah mahasiswa
 app.post("/tambahmahasiswa", (req, res) => {
    const sql = `INSERT INTO mahasiswa (id, nama, nim, jurusan) VALUES (?, ?, ?, ?)`;
    const values = [req.body.id, req.body.nama, req.body.nim, req.body.jurusan];
    db.query(sql, values, (err, result) => {
       if (err) console.log(err);
-      return res.json({ success: "Mahasiswa added successfully" });
+      return res.json({ success: "Mahasiswa berhasil ditambahkan" });
    });
 });
 
-// delete mahasiswa
+// Hapus mahasiswa
 app.delete("/mahasiswa/delete/:id", (req, res) => {
    const sql = `DELETE FROM mahasiswa WHERE id = ?`;
    db.query(sql, req.params.id, (err, result) => {
-      if (err) {
-         console.log(err);
-      } else {
-         return res.json({ success: "Book deleted successfully" });
-      }
+      if (err) throw err;
+      return res.json({ success: "Mahasiswa berhasil dihapus" });
    });
 });
 
-// update mahasiswa
+// Update mahasiswa
 app.put("/mahasiswa/update/:id", (req, res) => {
    const sql = `UPDATE mahasiswa SET id = ?, nim = ?, nama = ?, jurusan = ? WHERE id = ?`;
    const values = [req.body.id, req.body.nim, req.body.nama, req.body.jurusan, req.params.id];
    db.query(sql, values, (err, result) => {
-      if (err) {
-         throw err;
-      } else {
-         res.send(result);
-      }
+      if (err) throw err;
+      res.send(result);
    });
 });
 
-// select mahasiswa by id
+// Tampilkan mahasiswa by id
 app.get("/mahasiswa/getrecord/:id", (req, res) => {
    const sql = `SELECT * FROM mahasiswa WHERE id = ?`;
    db.query(sql, req.params.id, (err, result) => {
-      if (err) {
-         console.log(err);
-      } else {
-         return res.json(result);
-      }
+      if (err) throw err;
+      return res.json(result);
    });
 });
 
-// select book by id
-app.get("/buku/getrecord/:id_buku", (req, res) => {
-   const sql = `SELECT * FROM buku WHERE id_buku = ?`;
-   db.query(sql, req.params.id_buku, (err, result) => {
-      if (err) {
-         console.log(err);
-      } else {
-         return res.json(result);
-      }
-   });
-});
-
-// update book
-app.put("/buku/update/:id_buku", (req, res) => {
-   const sql = `UPDATE buku SET id_buku = ?, nama_buku = ?, isbn = ?, penulis = ?, penerbit = ?, tahun_terbit = ?, kategori = ?, stok = ? WHERE id_buku = ?`;
-   const values = [req.body.id_buku, req.body.nama_buku, req.body.isbn, req.body.penulis, req.body.penerbit, req.body.tahun_terbit, req.body.kategori, req.body.stok, req.params.id_buku];
-   db.query(sql, values, (err, result) => {
-      if (err) {
-         throw err;
-      } else {
-         res.send(result);
-      }
-   });
-});
-
-// GET data peminjaman
+// PEMINJAMAN
+// Tampilkan data peminjaman
 app.get("/daftarpeminjaman", (req, res) => {
    const sql = `SELECT * FROM peminjaman`;
    db.query(sql, (err, data) => {
@@ -128,22 +118,21 @@ app.get("/daftarpeminjaman", (req, res) => {
    });
 });
 
-// Fetch peminjaman details
+// Tampilkan peminjaman by id
 app.get("/peminjaman/:id_peminjaman", (req, res) => {
    const sql = `SELECT * FROM peminjaman WHERE id_peminjaman = ?`;
    db.query(sql, req.params.id_peminjaman, (err, result) => {
       if (err) {
-         console.log(err);
          res.status(500).send("Error fetching peminjaman details");
       } else {
-         res.json(result[0]); // Assuming id_peminjaman is unique and only one record is returned
+         res.json(result[0]);
       }
    });
 });
 
-// Adjusted endpoint for returning a book
+// Kembalikan buku
 app.post("/kembalikan/:id", (req, res) => {
-   // Adjust tanggal_pinjam to the correct timezone
+   // Convert timezone
    const tanggalPinjamCorrected = moment(req.body.tanggal_pinjam).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss");
 
    const sqlInsert = `INSERT INTO riwayat_peminjaman (id_peminjaman, id_buku, nim, tanggal_pinjam) VALUES (?, ?, ?, ?)`;
@@ -151,17 +140,15 @@ app.post("/kembalikan/:id", (req, res) => {
 
    db.query(sqlInsert, valuesInsert, (err, result) => {
       if (err) {
-         console.log(err);
          res.status(500).send("Error inserting into riwayatpeminjaman");
       } else {
-         // After successful insertion, delete from peminjaman
+         // After insert ke riwayat_peminjaman, delete dari peminjaman
          const sqlDelete = `DELETE FROM peminjaman WHERE id_peminjaman = ?`;
          db.query(sqlDelete, req.body.id_peminjaman, (err, result) => {
             if (err) {
-               console.log(err);
                res.status(500).send("Error deleting from peminjaman");
             } else {
-               res.json({ success: "Book returned successfully" });
+               res.json({ success: "Buku berhasil dikembalikan" });
             }
          });
       }
